@@ -5,7 +5,7 @@
   :description "Records count chooser for weblocks dataseq"
   :author "Olexiy Zamkoviy <olexiy.z@gmail.com>"
   :licence "LLGPL"
-  :depends-on (:weblocks)
+  :depends-on (:weblocks :yaclml)
   :components ((:file "package")
                (:file "weblocks-dataseq-records-count-panel")))
 
