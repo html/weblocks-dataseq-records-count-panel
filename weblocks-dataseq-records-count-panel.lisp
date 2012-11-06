@@ -15,13 +15,14 @@
                  (50 . "50")
                  (100 . "100")
                  (:all . "All")))
+   (choosen-variant :initform 10)
    (dataseq-instance :initarg :dataseq-instance 
                      :initform (error ":dataseq-instance is required for dataseq-records-count-panel"))
    (initial-count :initarg :initial-count :initform 10)
    (change-items-per-page-action :initform  "change-items-per-page")))
 
 (defmethod set-items-per-page-count ((widget dataseq-records-count-panel) count)
-  (with-slots (dataseq-instance) widget
+  (with-slots (dataseq-instance choosen-variant) widget
     (let ((final-count 
             (cond 
               ((integerp count) count) 
@@ -30,6 +31,7 @@
               (t (error "Don't know what to do with count ~A" count))))) 
       (setf (pagination-items-per-page (dataseq-pagination-widget dataseq-instance)) final-count) 
       (setf (pagination-current-page (dataseq-pagination-widget dataseq-instance)) 1)) 
+    (setf choosen-variant count)
     (mark-dirty widget) 
     (mark-dirty dataseq-instance)))
 
@@ -67,10 +69,7 @@
       ((integerp count)
        (= count items-per-page))
       ((equal count :all) 
-       (let ((records-count (dataseq-data-count (slot-value widget 'dataseq-instance))))
-         (and 
-           (> records-count (max-items-per-page-count widget))
-           (> (current-dataseq-instance-items-per-page widget) records-count))))
+       (equal count (slot-value widget 'choosen-variant)))
       (t (error (format nil "Don't know what to do with count ~A" count))))))
 
 (defmethod render-widget-body ((widget dataseq-records-count-panel) &rest args)
