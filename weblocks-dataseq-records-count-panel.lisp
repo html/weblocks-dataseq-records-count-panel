@@ -57,14 +57,20 @@
   (with-slots (dataseq-instance) widget 
     (pagination-items-per-page (dataseq-pagination-widget dataseq-instance))))
 
+(defmethod max-items-per-page-count ((widget dataseq-records-count-panel))
+  (with-slots (choose-variants) widget 
+    (apply #'max (remove-if-not #'integerp (mapcar #'car choose-variants)))))
+
 (defmethod items-per-page-equal-to-p ((widget dataseq-records-count-panel) count)
   (let ((items-per-page (current-dataseq-instance-items-per-page widget)))
     (cond 
       ((integerp count)
        (= count items-per-page))
       ((equal count :all) 
-       (> (current-dataseq-instance-items-per-page widget) 
-          (dataseq-data-count (slot-value widget 'dataseq-instance))))
+       (let ((records-count (dataseq-data-count (slot-value widget 'dataseq-instance))))
+         (and 
+           (> records-count (max-items-per-page-count widget))
+           (> (current-dataseq-instance-items-per-page widget) records-count))))
       (t (error (format nil "Don't know what to do with count ~A" count))))))
 
 (defmethod render-widget-body ((widget dataseq-records-count-panel) &rest args)
