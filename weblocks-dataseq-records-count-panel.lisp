@@ -27,7 +27,9 @@
             (cond 
               ((integerp count) count) 
               ((equal count :all)
-               (* 2 (dataseq-data-count (slot-value widget 'dataseq-instance)))) 
+               (if (zerop (dataseq-data-count (slot-value widget 'dataseq-instance)))
+                 1000000
+                 (* 2 (dataseq-data-count (slot-value widget 'dataseq-instance))))) 
               (t (error "Don't know what to do with count ~A" count))))) 
       (setf (pagination-items-per-page (dataseq-pagination-widget dataseq-instance)) final-count) 
       (setf (pagination-current-page (dataseq-pagination-widget dataseq-instance)) 1)) 
